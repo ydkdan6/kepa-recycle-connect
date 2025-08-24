@@ -14,16 +14,302 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      analytics_summary: {
+        Row: {
+          active_users: number | null
+          co2_saved_kg: number | null
+          completed_requests: number | null
+          created_at: string
+          date: string
+          id: string
+          total_requests: number | null
+          total_weight_kg: number | null
+        }
+        Insert: {
+          active_users?: number | null
+          co2_saved_kg?: number | null
+          completed_requests?: number | null
+          created_at?: string
+          date: string
+          id?: string
+          total_requests?: number | null
+          total_weight_kg?: number | null
+        }
+        Update: {
+          active_users?: number | null
+          co2_saved_kg?: number | null
+          completed_requests?: number | null
+          created_at?: string
+          date?: string
+          id?: string
+          total_requests?: number | null
+          total_weight_kg?: number | null
+        }
+        Relationships: []
+      }
+      campaign_participants: {
+        Row: {
+          campaign_id: string
+          id: string
+          registered_at: string
+          user_id: string
+        }
+        Insert: {
+          campaign_id: string
+          id?: string
+          registered_at?: string
+          user_id: string
+        }
+        Update: {
+          campaign_id?: string
+          id?: string
+          registered_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "campaign_participants_campaign_id_fkey"
+            columns: ["campaign_id"]
+            isOneToOne: false
+            referencedRelation: "campaigns"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      campaigns: {
+        Row: {
+          created_at: string
+          created_by: string
+          description: string
+          end_date: string
+          id: string
+          image_url: string | null
+          is_active: boolean | null
+          location: string | null
+          max_participants: number | null
+          start_date: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          created_by: string
+          description: string
+          end_date: string
+          id?: string
+          image_url?: string | null
+          is_active?: boolean | null
+          location?: string | null
+          max_participants?: number | null
+          start_date: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string
+          description?: string
+          end_date?: string
+          id?: string
+          image_url?: string | null
+          is_active?: boolean | null
+          location?: string | null
+          max_participants?: number | null
+          start_date?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      notifications: {
+        Row: {
+          data: Json | null
+          id: string
+          message: string
+          read: boolean | null
+          sent_at: string
+          title: string
+          type: string
+          user_id: string
+        }
+        Insert: {
+          data?: Json | null
+          id?: string
+          message: string
+          read?: boolean | null
+          sent_at?: string
+          title: string
+          type: string
+          user_id: string
+        }
+        Update: {
+          data?: Json | null
+          id?: string
+          message?: string
+          read?: boolean | null
+          sent_at?: string
+          title?: string
+          type?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      pickup_requests: {
+        Row: {
+          assigned_staff_id: string | null
+          assigned_vehicle: string | null
+          completed_date: string | null
+          created_at: string
+          id: string
+          notes: string | null
+          photo_url: string | null
+          pickup_address: string
+          pickup_latitude: number | null
+          pickup_longitude: number | null
+          preferred_date: string | null
+          quantity_kg: number
+          scheduled_date: string | null
+          status: Database["public"]["Enums"]["pickup_status"]
+          updated_at: string
+          user_id: string
+          waste_type: Database["public"]["Enums"]["waste_type"]
+        }
+        Insert: {
+          assigned_staff_id?: string | null
+          assigned_vehicle?: string | null
+          completed_date?: string | null
+          created_at?: string
+          id?: string
+          notes?: string | null
+          photo_url?: string | null
+          pickup_address: string
+          pickup_latitude?: number | null
+          pickup_longitude?: number | null
+          preferred_date?: string | null
+          quantity_kg: number
+          scheduled_date?: string | null
+          status?: Database["public"]["Enums"]["pickup_status"]
+          updated_at?: string
+          user_id: string
+          waste_type: Database["public"]["Enums"]["waste_type"]
+        }
+        Update: {
+          assigned_staff_id?: string | null
+          assigned_vehicle?: string | null
+          completed_date?: string | null
+          created_at?: string
+          id?: string
+          notes?: string | null
+          photo_url?: string | null
+          pickup_address?: string
+          pickup_latitude?: number | null
+          pickup_longitude?: number | null
+          preferred_date?: string | null
+          quantity_kg?: number
+          scheduled_date?: string | null
+          status?: Database["public"]["Enums"]["pickup_status"]
+          updated_at?: string
+          user_id?: string
+          waste_type?: Database["public"]["Enums"]["waste_type"]
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          address: string | null
+          created_at: string
+          full_name: string
+          id: string
+          latitude: number | null
+          longitude: number | null
+          notification_preferences: Json | null
+          phone: string | null
+          points: number | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          address?: string | null
+          created_at?: string
+          full_name: string
+          id?: string
+          latitude?: number | null
+          longitude?: number | null
+          notification_preferences?: Json | null
+          phone?: string | null
+          points?: number | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          address?: string | null
+          created_at?: string
+          full_name?: string
+          id?: string
+          latitude?: number | null
+          longitude?: number | null
+          notification_preferences?: Json | null
+          phone?: string | null
+          points?: number | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      user_roles: {
+        Row: {
+          created_at: string
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      get_user_role: {
+        Args: { user_uuid: string }
+        Returns: Database["public"]["Enums"]["app_role"]
+      }
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "admin" | "field_staff" | "resident"
+      pickup_status:
+        | "requested"
+        | "scheduled"
+        | "in_progress"
+        | "completed"
+        | "delayed"
+      waste_type:
+        | "plastic"
+        | "paper"
+        | "organic"
+        | "electronics"
+        | "glass"
+        | "metal"
+        | "mixed"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +436,24 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["admin", "field_staff", "resident"],
+      pickup_status: [
+        "requested",
+        "scheduled",
+        "in_progress",
+        "completed",
+        "delayed",
+      ],
+      waste_type: [
+        "plastic",
+        "paper",
+        "organic",
+        "electronics",
+        "glass",
+        "metal",
+        "mixed",
+      ],
+    },
   },
 } as const
