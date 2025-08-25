@@ -86,11 +86,6 @@ const Index = () => {
   };
 
   const handleSubmitRequest = async () => {
-    if (!user) {
-      setShowAuthModal(true);
-      return;
-    }
-
     if (!requestForm.waste_type || !requestForm.quantity_kg || !requestForm.pickup_address) {
       toast({
         title: "Error",
@@ -102,9 +97,11 @@ const Index = () => {
 
     setSubmittingRequest(true);
     try {
+      // For non-authenticated users, we'll create a placeholder user_id
+      // In a real system, you might want to collect contact info instead
       const { error } = await supabase.from('pickup_requests').insert([
         {
-          user_id: user.id,
+          user_id: user?.id || '00000000-0000-0000-0000-000000000000', // Anonymous requests
           ...requestForm,
           preferred_date: requestForm.preferred_date || null
         }
@@ -114,7 +111,7 @@ const Index = () => {
 
       toast({
         title: "Request Submitted!",
-        description: "Your pickup request has been submitted successfully",
+        description: "Your pickup request has been submitted successfully. KEPA staff will contact you soon.",
       });
 
       // Reset form
@@ -161,25 +158,14 @@ const Index = () => {
               Join KEPA's digital recycling initiative. Request pickups, track progress, and contribute to a cleaner, greener Kaduna.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              {user ? (
-                <Button 
-                  size="lg" 
-                  className="bg-white text-primary hover:bg-white/90"
-                  onClick={() => setShowRequestForm(true)}
-                >
-                  <Plus className="mr-2 h-5 w-5" />
-                  Request Pickup
-                </Button>
-              ) : (
-                <Button 
-                  size="lg" 
-                  className="bg-white text-primary hover:bg-white/90"
-                  onClick={() => setShowAuthModal(true)}
-                >
-                  <Users className="mr-2 h-5 w-5" />
-                  Get Started
-                </Button>
-              )}
+              <Button 
+                size="lg" 
+                className="bg-white text-primary hover:bg-white/90"
+                onClick={() => setShowRequestForm(true)}
+              >
+                <Plus className="mr-2 h-5 w-5" />
+                Request Pickup
+              </Button>
               <Button 
                 size="lg" 
                 variant="outline" 
@@ -249,120 +235,49 @@ const Index = () => {
         </div>
       </section>
 
-      {/* User Dashboard or Features */}
+      {/* Public Features Section */}
       <section className="py-16">
         <div className="container mx-auto px-4">
-          {user ? (
-            // Authenticated User Dashboard
-            <div>
-              <div className="mb-8 text-center">
-                <h2 className="text-2xl lg:text-3xl font-bold text-foreground mb-2">
-                  Welcome back, {profile?.full_name || 'User'}!
-                </h2>
-                <p className="text-muted-foreground">
-                  {isKepaStaff ? 'Manage recycling operations' : 'Manage your waste recycling'}
-                </p>
+          <div className="text-center mb-12">
+            <h2 className="text-2xl lg:text-3xl font-bold text-foreground mb-4">
+              Why Choose KEPA Digital Recycling?
+            </h2>
+            <p className="text-muted-foreground max-w-2xl mx-auto">
+              Our platform makes waste management convenient, trackable, and environmentally impactful for all Kaduna residents.
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-3 gap-8">
+            <div className="text-center">
+              <div className="p-4 bg-primary/10 rounded-lg w-16 h-16 flex items-center justify-center mx-auto mb-4">
+                <Truck className="h-8 w-8 text-primary" />
               </div>
-
-              <div className="grid md:grid-cols-3 gap-6 mb-8">
-                <Card className="hover:shadow-primary transition-shadow cursor-pointer">
-                  <CardHeader>
-                    <CardTitle className="flex items-center">
-                      <Truck className="mr-2 h-5 w-5 text-primary" />
-                      Quick Request
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <p className="text-muted-foreground text-sm mb-4">
-                      Submit a new waste pickup request
-                    </p>
-                    <Button 
-                      className="w-full gradient-primary text-primary-foreground"
-                      onClick={() => setShowRequestForm(true)}
-                    >
-                      <Plus className="mr-2 h-4 w-4" />
-                      New Request
-                    </Button>
-                  </CardContent>
-                </Card>
-
-                <Card className="hover:shadow-primary transition-shadow">
-                  <CardHeader>
-                    <CardTitle className="flex items-center">
-                      <Award className="mr-2 h-5 w-5 text-warning" />
-                      Your Points
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="text-3xl font-bold text-primary mb-2">
-                      {profile?.points || 0}
-                    </div>
-                    <p className="text-muted-foreground text-sm">
-                      Earned from recycling activities
-                    </p>
-                  </CardContent>
-                </Card>
-
-                <Card className="hover:shadow-primary transition-shadow">
-                  <CardHeader>
-                    <CardTitle className="flex items-center">
-                      <MessageSquare className="mr-2 h-5 w-5 text-secondary" />
-                      Recent Activity
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <p className="text-muted-foreground text-sm">
-                      No recent requests
-                    </p>
-                  </CardContent>
-                </Card>
-              </div>
+              <h3 className="text-lg font-semibold text-foreground mb-2">Easy Pickup Requests</h3>
+              <p className="text-muted-foreground text-sm">
+                Schedule waste pickups with just a few clicks. Specify waste type, quantity, and preferred dates.
+              </p>
             </div>
-          ) : (
-            // Public Features Section
-            <div>
-              <div className="text-center mb-12">
-                <h2 className="text-2xl lg:text-3xl font-bold text-foreground mb-4">
-                  Why Choose KEPA Digital Recycling?
-                </h2>
-                <p className="text-muted-foreground max-w-2xl mx-auto">
-                  Our platform makes waste management convenient, trackable, and environmentally impactful for all Kaduna residents.
-                </p>
+
+            <div className="text-center">
+              <div className="p-4 bg-primary/10 rounded-lg w-16 h-16 flex items-center justify-center mx-auto mb-4">
+                <TrendingUp className="h-8 w-8 text-primary" />
               </div>
-
-              <div className="grid md:grid-cols-3 gap-8">
-                <div className="text-center">
-                  <div className="p-4 bg-primary/10 rounded-lg w-16 h-16 flex items-center justify-center mx-auto mb-4">
-                    <Truck className="h-8 w-8 text-primary" />
-                  </div>
-                  <h3 className="text-lg font-semibold text-foreground mb-2">Easy Pickup Requests</h3>
-                  <p className="text-muted-foreground text-sm">
-                    Schedule waste pickups with just a few clicks. Specify waste type, quantity, and preferred dates.
-                  </p>
-                </div>
-
-                <div className="text-center">
-                  <div className="p-4 bg-primary/10 rounded-lg w-16 h-16 flex items-center justify-center mx-auto mb-4">
-                    <TrendingUp className="h-8 w-8 text-primary" />
-                  </div>
-                  <h3 className="text-lg font-semibold text-foreground mb-2">Real-time Tracking</h3>
-                  <p className="text-muted-foreground text-sm">
-                    Monitor your request status from submission to completion with live updates.
-                  </p>
-                </div>
-
-                <div className="text-center">
-                  <div className="p-4 bg-primary/10 rounded-lg w-16 h-16 flex items-center justify-center mx-auto mb-4">
-                    <Globe className="h-8 w-8 text-primary" />
-                  </div>
-                  <h3 className="text-lg font-semibold text-foreground mb-2">Environmental Impact</h3>
-                  <p className="text-muted-foreground text-sm">
-                    See your contribution to Kaduna's environmental goals and earn rewards for recycling.
-                  </p>
-                </div>
-              </div>
+              <h3 className="text-lg font-semibold text-foreground mb-2">Real-time Tracking</h3>
+              <p className="text-muted-foreground text-sm">
+                Monitor your request status from submission to completion with live updates.
+              </p>
             </div>
-          )}
+
+            <div className="text-center">
+              <div className="p-4 bg-primary/10 rounded-lg w-16 h-16 flex items-center justify-center mx-auto mb-4">
+                <Globe className="h-8 w-8 text-primary" />
+              </div>
+              <h3 className="text-lg font-semibold text-foreground mb-2">Environmental Impact</h3>
+              <p className="text-muted-foreground text-sm">
+                See your contribution to Kaduna's environmental goals and earn rewards for recycling.
+              </p>
+            </div>
+          </div>
         </div>
       </section>
 
