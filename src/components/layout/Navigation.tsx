@@ -115,13 +115,13 @@ export const Navigation = ({ onShowAuthModal }: NavigationProps) => {
                 </div>
               ) : (
                 <Link to="/staff-login">
-                  <Button
+                  {/* <Button
                     variant="ghost"
                     size="sm"
                     className="text-muted-foreground hover:text-foreground"
                   >
                     Staff Login
-                  </Button>
+                  </Button> */}
                 </Link>
               )}
             </div>
