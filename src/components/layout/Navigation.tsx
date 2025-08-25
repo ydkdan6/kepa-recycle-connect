@@ -93,14 +93,14 @@ export const Navigation = ({ onShowAuthModal }: NavigationProps) => {
 
             {/* Desktop Auth Controls */}
             <div className="hidden md:flex items-center space-x-4">
-              {user ? (
+              {user && isKepaStaff ? (
                 <div className="flex items-center space-x-3">
                   <div className="text-right">
                     <p className="text-sm font-medium text-foreground">
                       {profile?.full_name || 'User'}
                     </p>
                     <p className="text-xs text-muted-foreground">
-                      {isKepaStaff ? 'KEPA Staff' : 'Resident'}
+                      KEPA Staff
                     </p>
                   </div>
                   <Button
@@ -114,13 +114,15 @@ export const Navigation = ({ onShowAuthModal }: NavigationProps) => {
                   </Button>
                 </div>
               ) : (
-                <Button
-                  onClick={handleAuthClick}
-                  className="gradient-primary text-primary-foreground"
-                >
-                  <User className="h-4 w-4 mr-2" />
-                  KEPA Staff Access
-                </Button>
+                <Link to="/staff-login">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="text-muted-foreground hover:text-foreground"
+                  >
+                    Staff Login
+                  </Button>
+                </Link>
               )}
             </div>
 
@@ -165,14 +167,14 @@ export const Navigation = ({ onShowAuthModal }: NavigationProps) => {
                 })}
                 
                 <div className="pt-4 border-t border-border">
-                  {user ? (
+                  {user && isKepaStaff ? (
                     <div className="space-y-2">
                       <div className="px-3 py-2">
                         <p className="text-sm font-medium text-foreground">
                           {profile?.full_name || 'User'}
                         </p>
                         <p className="text-xs text-muted-foreground">
-                          {isKepaStaff ? 'KEPA Staff' : 'Resident'}
+                          KEPA Staff
                         </p>
                       </div>
                       <Button
@@ -185,13 +187,15 @@ export const Navigation = ({ onShowAuthModal }: NavigationProps) => {
                       </Button>
                     </div>
                   ) : (
-                    <Button
-                      onClick={handleAuthClick}
-                      className="w-full gradient-primary text-primary-foreground"
-                    >
-                      <User className="h-4 w-4 mr-2" />
-                      KEPA Staff Access
-                    </Button>
+                    <Link to="/staff-login" onClick={() => setIsMobileMenuOpen(false)}>
+                      <Button
+                        variant="ghost"
+                        className="w-full justify-start text-muted-foreground hover:text-foreground"
+                      >
+                        <User className="h-4 w-4 mr-2" />
+                        Staff Login
+                      </Button>
+                    </Link>
                   )}
                 </div>
               </div>
