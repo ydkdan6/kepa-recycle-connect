@@ -30,7 +30,7 @@ const StaffLoginPage = () => {
   // Redirect if already authenticated
   useEffect(() => {
     if (user) {
-      navigate('/staff');
+      navigate('/staff-dashboard');
     }
   }, [user, navigate]);
 
