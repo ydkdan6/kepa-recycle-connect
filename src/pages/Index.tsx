@@ -97,11 +97,10 @@ const Index = () => {
 
     setSubmittingRequest(true);
     try {
-      // For non-authenticated users, we'll create a placeholder user_id
-      // In a real system, you might want to collect contact info instead
+      // For non-authenticated users, user_id will be null (anonymous requests)
       const { error } = await supabase.from('pickup_requests').insert([
         {
-          user_id: user?.id || '00000000-0000-0000-0000-000000000000', // Anonymous requests
+          user_id: user?.id || null, // null for anonymous requests
           ...requestForm,
           preferred_date: requestForm.preferred_date || null
         }
