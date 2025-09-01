@@ -12,7 +12,10 @@ import {
   User,
   Phone,
   Mail,
-  Package
+  Package,
+  CheckCircle,
+  Trash2,
+  MessageCircle
 } from 'lucide-react';
 
 type PickupStatus = 'requested' | 'scheduled' | 'in_progress' | 'completed' | 'delayed';
@@ -43,9 +46,13 @@ const UserRequestsPage = () => {
 
   const fetchAllRequests = async () => {
     try {
+      // Filter for requests from the last 5 minutes
+      const fiveMinutesAgo = new Date(Date.now() - 5 * 60 * 1000).toISOString();
+      
       const { data, error } = await supabase
         .from('pickup_requests')
         .select('*')
+        .gte('created_at', fiveMinutesAgo)
         .order('created_at', { ascending: false });
 
       if (error) throw error;
@@ -60,6 +67,56 @@ const UserRequestsPage = () => {
       });
     } finally {
       setLoading(false);
+    }
+  };
+
+  const approveRequest = async (requestId: string) => {
+    try {
+      const { error } = await supabase
+        .from('pickup_requests')
+        .update({ status: 'scheduled' })
+        .eq('id', requestId);
+
+      if (error) throw error;
+
+      toast({
+        title: "Success",
+        description: "Request approved successfully",
+      });
+      
+      fetchAllRequests();
+    } catch (error) {
+      console.error('Error approving request:', error);
+      toast({
+        title: "Error",
+        description: "Failed to approve request",
+        variant: "destructive"
+      });
+    }
+  };
+
+  const deleteRequest = async (requestId: string) => {
+    try {
+      const { error } = await supabase
+        .from('pickup_requests')
+        .delete()
+        .eq('id', requestId);
+
+      if (error) throw error;
+
+      toast({
+        title: "Success",
+        description: "Request deleted successfully",
+      });
+      
+      fetchAllRequests();
+    } catch (error) {
+      console.error('Error deleting request:', error);
+      toast({
+        title: "Error",
+        description: "Failed to delete request",
+        variant: "destructive"
+      });
     }
   };
 
@@ -194,6 +251,62 @@ const UserRequestsPage = () => {
                     <p className="text-sm text-muted-foreground bg-muted p-3 rounded-lg">{request.notes}</p>
                   </div>
                 )}
+
+                {/* Action Buttons */}
+                <div className="border-t pt-4">
+                  <div className="flex flex-wrap gap-2">
+                    {(request.contact_phone || request.contact_email) && (
+                      <div className="flex gap-2">
+                        {request.contact_phone && (
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            asChild
+                          >
+                            <a href={`tel:${request.contact_phone}`} className="flex items-center gap-2">
+                              <Phone className="h-4 w-4" />
+                              Call
+                            </a>
+                          </Button>
+                        )}
+                        {request.contact_email && (
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            asChild
+                          >
+                            <a href={`mailto:${request.contact_email}`} className="flex items-center gap-2">
+                              <Mail className="h-4 w-4" />
+                              Email
+                            </a>
+                          </Button>
+                        )}
+                      </div>
+                    )}
+                    
+                    {request.status === 'requested' && (
+                      <Button
+                        size="sm"
+                        variant="default"
+                        onClick={() => approveRequest(request.id)}
+                        className="flex items-center gap-2"
+                      >
+                        <CheckCircle className="h-4 w-4" />
+                        Approve
+                      </Button>
+                    )}
+                    
+                    <Button
+                      size="sm"
+                      variant="destructive"
+                      onClick={() => deleteRequest(request.id)}
+                      className="flex items-center gap-2"
+                    >
+                      <Trash2 className="h-4 w-4" />
+                      Delete
+                    </Button>
+                  </div>
+                </div>
               </CardContent>
             </Card>
           ))
