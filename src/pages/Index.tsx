@@ -33,6 +33,8 @@ interface PickupRequest {
   pickup_address: string;
   preferred_date: string;
   notes?: string;
+  contact_phone: string;
+  contact_email: string;
 }
 
 const Index = () => {
@@ -55,7 +57,9 @@ const Index = () => {
     quantity_kg: 0,
     pickup_address: '',
     preferred_date: '',
-    notes: ''
+    notes: '',
+    contact_phone: '',
+    contact_email: ''
   });
 
   // Handle geolocation
@@ -86,7 +90,8 @@ const Index = () => {
   };
 
   const handleSubmitRequest = async () => {
-    if (!requestForm.waste_type || !requestForm.quantity_kg || !requestForm.pickup_address) {
+    if (!requestForm.waste_type || !requestForm.quantity_kg || !requestForm.pickup_address || 
+        !requestForm.contact_phone || !requestForm.contact_email) {
       toast({
         title: "Error",
         description: "Please fill in all required fields",
@@ -119,7 +124,9 @@ const Index = () => {
         quantity_kg: 0,
         pickup_address: '',
         preferred_date: '',
-        notes: ''
+        notes: '',
+        contact_phone: '',
+        contact_email: ''
       });
       setShowRequestForm(false);
     } catch (error: any) {
@@ -365,6 +372,34 @@ const Index = () => {
                     onChange={(e) => setRequestForm(prev => ({ 
                       ...prev, 
                       preferred_date: e.target.value 
+                    }))}
+                  />
+                </div>
+
+                <div>
+                  <Label htmlFor="phone">Phone Number *</Label>
+                  <Input
+                    id="phone"
+                    type="tel"
+                    placeholder="e.g., +234 800 123 4567"
+                    value={requestForm.contact_phone}
+                    onChange={(e) => setRequestForm(prev => ({ 
+                      ...prev, 
+                      contact_phone: e.target.value 
+                    }))}
+                  />
+                </div>
+
+                <div>
+                  <Label htmlFor="email">Email Address *</Label>
+                  <Input
+                    id="email"
+                    type="email"
+                    placeholder="e.g., example@email.com"
+                    value={requestForm.contact_email}
+                    onChange={(e) => setRequestForm(prev => ({ 
+                      ...prev, 
+                      contact_email: e.target.value 
                     }))}
                   />
                 </div>

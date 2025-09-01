@@ -159,6 +159,8 @@ export type Database = {
           assigned_staff_id: string | null
           assigned_vehicle: string | null
           completed_date: string | null
+          contact_email: string | null
+          contact_phone: string | null
           created_at: string
           id: string
           notes: string | null
@@ -178,6 +180,8 @@ export type Database = {
           assigned_staff_id?: string | null
           assigned_vehicle?: string | null
           completed_date?: string | null
+          contact_email?: string | null
+          contact_phone?: string | null
           created_at?: string
           id?: string
           notes?: string | null
@@ -197,6 +201,8 @@ export type Database = {
           assigned_staff_id?: string | null
           assigned_vehicle?: string | null
           completed_date?: string | null
+          contact_email?: string | null
+          contact_phone?: string | null
           created_at?: string
           id?: string
           notes?: string | null

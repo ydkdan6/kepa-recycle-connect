@@ -28,7 +28,8 @@ export const Navigation = ({ onShowAuthModal }: NavigationProps) => {
 
   const navItems = [
     { icon: Home, label: 'Home', path: '/', forAll: true },
-    { icon: Truck, label: 'My Requests', path: '/requests', forAll: false },
+    { icon: Truck, label: 'Staff Requests', path: '/requests', forKepaOnly: true },
+    { icon: Truck, label: 'All Requests', path: '/all-requests', forAll: true },
     { icon: Calendar, label: 'Schedules', path: '/schedules', forKepaOnly: true },
     { icon: Megaphone, label: 'Campaigns', path: '/campaigns', forAll: true },
     { icon: BarChart3, label: 'Analytics', path: '/analytics', forKepaOnly: true },
