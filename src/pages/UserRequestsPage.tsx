@@ -2,13 +2,17 @@ import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { Calendar } from '@/components/ui/calendar';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
+import { format } from 'date-fns';
+import { cn } from '@/lib/utils';
 import { 
   Truck, 
   Clock, 
   MapPin, 
-  Calendar,
+  CalendarIcon,
   User,
   Phone,
   Mail,
@@ -39,20 +43,23 @@ const UserRequestsPage = () => {
   const { toast } = useToast();
   const [requests, setRequests] = useState<PickupRequest[]>([]);
   const [loading, setLoading] = useState(true);
+  const [selectedDate, setSelectedDate] = useState<Date>(new Date());
 
   useEffect(() => {
     fetchAllRequests();
-  }, []);
+  }, [selectedDate]);
 
   const fetchAllRequests = async () => {
     try {
-      // Filter for requests from the last 5 minutes
-      const fiveMinutesAgo = new Date(Date.now() - 5 * 60 * 1000).toISOString();
+      // Filter for requests from the selected month and year
+      const startOfMonth = new Date(selectedDate.getFullYear(), selectedDate.getMonth(), 1);
+      const endOfMonth = new Date(selectedDate.getFullYear(), selectedDate.getMonth() + 1, 0, 23, 59, 59);
       
       const { data, error } = await supabase
         .from('pickup_requests')
         .select('*')
-        .gte('created_at', fiveMinutesAgo)
+        .gte('created_at', startOfMonth.toISOString())
+        .lte('created_at', endOfMonth.toISOString())
         .order('created_at', { ascending: false });
 
       if (error) throw error;
@@ -166,6 +173,36 @@ const UserRequestsPage = () => {
         </p>
       </div>
 
+      {/* Date Filter */}
+      <div className="mb-6">
+        <div className="flex items-center gap-4">
+          <span className="text-sm font-medium">Filter by month:</span>
+          <Popover>
+            <PopoverTrigger asChild>
+              <Button
+                variant="outline"
+                className={cn(
+                  "justify-start text-left font-normal",
+                  !selectedDate && "text-muted-foreground"
+                )}
+              >
+                <CalendarIcon className="mr-2 h-4 w-4" />
+                {selectedDate ? format(selectedDate, "MMMM yyyy") : "Pick a month"}
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-auto p-0" align="start">
+              <Calendar
+                mode="single"
+                selected={selectedDate}
+                onSelect={(date) => date && setSelectedDate(date)}
+                initialFocus
+                className={cn("p-3 pointer-events-auto")}
+              />
+            </PopoverContent>
+          </Popover>
+        </div>
+      </div>
+
       <div className="grid gap-6">
         {requests.length === 0 ? (
           <Card className="p-8">
@@ -212,7 +249,7 @@ const UserRequestsPage = () => {
                   </div>
                   <div className="space-y-2">
                     <div className="flex items-center gap-2 text-sm">
-                      <Calendar className="h-4 w-4 text-primary" />
+                      <CalendarIcon className="h-4 w-4 text-primary" />
                       <span className="font-medium">Preferred Date:</span>
                       <span>{request.preferred_date ? new Date(request.preferred_date).toLocaleDateString() : 'Any time'}</span>
                     </div>
