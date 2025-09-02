@@ -325,7 +325,7 @@ const Index = () => {
                 </div>
 
                 <div>
-                  <Label htmlFor="quantity">Estimated Weight (kg) *</Label>
+                  <Label htmlFor="quantity">Number of Waste in Your Area *</Label>
                   <Input
                     id="quantity"
                     type="number"
