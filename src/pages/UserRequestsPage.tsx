@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -6,6 +7,7 @@ import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
+import { useAuth } from '@/hooks/useAuth';
 import { format } from 'date-fns';
 import { cn } from '@/lib/utils';
 import { 
@@ -41,13 +43,24 @@ interface PickupRequest {
 
 const UserRequestsPage = () => {
   const { toast } = useToast();
+  const navigate = useNavigate();
+  const { session, loading: authLoading } = useAuth();
   const [requests, setRequests] = useState<PickupRequest[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
 
+  // Check authentication on mount
   useEffect(() => {
-    fetchAllRequests();
-  }, [selectedDate]);
+    if (!authLoading && !session) {
+      navigate('/staff-login');
+    }
+  }, [session, authLoading, navigate]);
+
+  useEffect(() => {
+    if (session) {
+      fetchAllRequests();
+    }
+  }, [selectedDate, session]);
 
   const fetchAllRequests = async () => {
     try {
@@ -127,13 +140,15 @@ const UserRequestsPage = () => {
     }
   };
 
-  if (loading) {
+  if (authLoading || loading || !session) {
     return (
       <div className="container mx-auto px-4 py-8">
         <div className="flex items-center justify-center h-64">
           <div className="text-center">
             <Truck className="h-8 w-8 text-primary animate-pulse mx-auto mb-2" />
-            <p className="text-muted-foreground">Loading requests...</p>
+            <p className="text-muted-foreground">
+              {authLoading || !session ? 'Checking authentication...' : 'Loading requests...'}
+            </p>
           </div>
         </div>
       </div>
